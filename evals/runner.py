@@ -26,13 +26,13 @@ def capture_stream(generator):
     return main_content,process_content,interrupt
 
 def reset_eval_databases():
-    # 只允许删评测库：business_config/memory_config 是全局可变配置，误指向生产库时这里兜底
+    # 只允许删评测库
     for name in (business_config["business_db"], memory_config["memory_db"]):
         if "eval" not in os.path.basename(name):
             raise RuntimeError(f"拒绝删除非评测库: {name}")
-    db_dir = get_abs_path("databases")
-    for name in ("eval_business.db", "eval_memory.db"):
-        for path in glob.glob(os.path.join(db_dir, name) + "*"):   # 连 .db-wal / .db-shm 一起清
+    # 清空评测库
+    for name in (business_config["business_db"], memory_config["memory_db"]):
+        for path in glob.glob(get_abs_path(name) + "*"):
             os.remove(path)
             print("removed", os.path.basename(path))
 

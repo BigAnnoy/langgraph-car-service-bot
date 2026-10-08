@@ -128,8 +128,6 @@ data/                         知识库源文件与外部业务数据（records.
 databases/                    SQLite 运行库（业务库、记忆库、评测库）
 evals/                        callback 采集 + 表驱动判定 + runner
 app.py                        Streamlit 入口（流式渲染、中断审阅面板）
-agent/react_agent.py          旧版 create_agent 实现，已被父图 + 双子图取代（保留未删）
-agent/tools/middleware.py     旧版中间件方案，同上
 ```
 
 ## 配置说明

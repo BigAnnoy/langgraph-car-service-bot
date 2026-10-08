@@ -4,5 +4,5 @@ __pycache__/
 milvus.db/
 logs/
 rag/md5_hex_store.db
-data/
 databases/
+.trae/
