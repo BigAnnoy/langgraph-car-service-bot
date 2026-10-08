@@ -1,0 +1,3 @@
+business_db: databases/business.db
+artifact_table_name: artifacts
+session_table_name: sessions

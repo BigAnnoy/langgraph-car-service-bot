@@ -1,0 +1,5 @@
+main_prompt_path: prompts/main_prompt.txt
+report_prompt_path: prompts/report_prompt.txt
+report_quality_prompt_path: prompts/report_quality_prompt.txt
+intent_analysis_prompt_path: prompts/intent_analysis_prompt.txt
+messages_summary_prompt_path: prompts/messages_summary_prompt.txt

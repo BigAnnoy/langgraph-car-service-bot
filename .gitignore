@@ -1,0 +1,8 @@
+.env
+__pycache__/
+*.pyc
+milvus.db/
+logs/
+rag/md5_hex_store.db
+data/
+databases/

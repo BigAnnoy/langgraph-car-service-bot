@@ -1,0 +1,14 @@
+database_dir: milvus.db
+collection_name: agent_rag
+
+# 返回的相似文档数量
+k: 3
+
+data_dir: data
+md5_hex_store: rag/md5_hex_store.db
+allow_knowledge_types: ["txt", "pdf"]
+
+chunk_size: 200
+chunk_overlap: 20
+dimension: 2560
+separators: ["\n\n", "\n", "\r", "## ", "### ", "# ", "。", "！", "？", "；", "……", "，", " ", "\t"]

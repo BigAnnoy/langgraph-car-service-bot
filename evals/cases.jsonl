@@ -1,0 +1,5 @@
+{"id":"chat_001","expect_scene":"chat","user_id":"1001","query":"车辆怎么换挡","expect_tools":["rag_search"],"enable":true}
+{"id":"chat_002","expect_scene":"chat","user_id":"1002","query":"你好","expect_no_tools": true,"enable":false}
+{"id":"report_001","expect_scene":"report","query":"给我2025年3月的车辆报告","user_id":"1003","month":"2025-03","expect_interrupted":true,"expect_tools":["fetch_external_data"],"resume_decision":"accept","enable":true}
+{"id":"report_002","expect_scene":"report","query":"给我2025年3月的车辆报告","user_id":"1004","month":"2025-03","expect_interrupted":true,"resume_decision":"cancel","enable":false}
+{"id":"report_003","expect_scene":"report","query":"给我2025年4月的车辆报告","user_id":"1005","month":"2025-04","expect_interrupted":true,"resume_decision":"edit","user_edit_content":"少些颜文字","enable":true}

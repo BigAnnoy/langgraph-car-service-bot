@@ -1,0 +1,19 @@
+memory_db: databases/memory.db
+long_term_memory_table_name: long_term_memory
+short_term_memory_table_name: short_term_memory
+
+# 长期记忆的分类与属性枚举，category为分类，不支持自定义分类，attrs为属性列表，可自定义属性
+long_term_memory_categories:
+  - category: 用户画像
+    attrs: [地区 , 性别 , 年龄 , 驾龄 , 职业 , 姓名 , 手机号 , 邮箱 , 家庭成员 , 车辆用途]
+  - category: 偏好
+    attrs: [充电习惯 , 驾驶模式 , 空调温度 , 常用路线 , 保养提醒偏好 , 产品建议 , 报告要求]
+  - category: 事实
+    attrs: [车型 , 车龄 , 电池类型 , 车身颜色 , 上次保养时间 , 用车频率 , 电池健康度 , 故障码记录]
+
+# 追加型 attr：同 key 多次写入累积去重、按上限截断；未列出的默认为覆盖型 
+append_attrs: [ 报告要求 ]
+append_max_length: 10
+
+summarization_trigger: 30
+summarization_keep: 20
