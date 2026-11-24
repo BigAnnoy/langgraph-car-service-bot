@@ -1,6 +1,6 @@
-# 扫地机器人智能客服 Agent（LangGraph 多智能体 + RAG + 多级记忆 + 人工审阅环）
+# 车主智能客服 Agent（LangGraph 多智能体 + RAG + 多级记忆 + 人工审阅环）
 
-基于 **LangGraph** 编排的智能客服系统：父图做意图路由，聊天与报告两条子图各自闭环，报告流程内建 **AI 质检自动重生成** 与 **人工审阅中断（interrupt / resume）**，配套 **RAG 知识库问答**、**多级记忆** 与 **自建评测（evals）**，前端为 Streamlit。
+基于 **LangGraph** 编排的车主智能客服系统（智能车管家，面向私家车主的车辆问答与车辆健康报告）：父图做意图路由，聊天与报告两条子图各自闭环，报告流程内建 **AI 质检自动重生成** 与 **人工审阅中断（interrupt / resume）**，配套 **RAG 知识库问答**、**多级记忆** 与 **自建评测（evals）**，前端为 Streamlit。
 
 ## 架构总览
 
@@ -18,8 +18,9 @@
               │   ↓ 条件边        │  │   ↓                            │
               │ tool_call_node   │  │ report_scene_node（生成草稿）      │
               │   ↺ 回到自身      │  │   ↓ tool_call_router           │
-              └──────────────────┘  │ tool_call ⇄ quality_agent_node  │
-                                    │   ↓ 分数 < 80 自动重生成（≤3 次）  │
+              └──────────────────┘  │   ├ 有工具→tool_call ↺ 回到草稿   │
+                                    │   └ 无工具→quality_agent_node 打分 │
+                                    │   ↓ 分数 < 80 回炉重生成（≤3 次）  │
                                     │ user_decision_node ← interrupt() │
                                     │   accept→落库 / cancel→结束 /     │
                                     │   edit→写偏好并重新生成           │
@@ -28,7 +29,7 @@
 
 - **父图**：`agent/graph_agent.py`。`OverAllState`（继承 `MessagesState`）+ `SqliteSaver` 检查点 + `SqliteStore` 长期记忆，`compile(checkpointer=..., store=...)`；`execute_stream` / `resume_stream` 以 `stream_mode=["messages","updates","custom"]` 与 `subgraphs=True` 输出，并把 `__interrupt__` 转成前端可渲染的中断载荷。
 - **意图路由**：先匹配「报告 / 报表 / report」关键词直接进报告子图；未命中才调用 `with_structured_output` 的小模型判定，失败重试后兜底为 `chat`。
-- **报告子图**：`ReportState` 独立于父图消息（`subgraph_messages`），质检模型输出 `QualityScore(0~100)`；低于 80 自动 `goto=report_scene_node` 重生成，连续 3 次不达标则降级为人工审阅。
+- **报告子图**：`ReportState` 独立于父图消息（`subgraph_messages`），质检模型输出 `QualityScore(0~100)`；低于 80 自动 `goto=report_scene_node` 重生成，最多重生成 3 次（`DEFAULT_RETRY_COUNT`），仍不达标则降级为人工审阅；质检分数解析失败同样转人工审阅（此时 `quality_score = -1`）。
 - **人工审阅环**：`interrupt()` 挂起并把草稿报告交给用户，前端用 `segmented_control` 收集「接受 / 修改 / 取消」+ 修改建议，`Command(resume=...)` 恢复执行。选择「修改」时把建议以**追加型偏好**写入长期记忆，下次生成自动带入。
 - **可靠性**：节点级 `RetryPolicy(max_attempts=3)`；工具调用经 `wrap_tool_call` 钩子链（`retry_tool_call` → `log_tool_call`），重试耗尽返回 `ToolMessage("工具调用失败...")` 而不是抛异常中断整条链路。
 
